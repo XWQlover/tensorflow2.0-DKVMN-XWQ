@@ -23,34 +23,22 @@ class AssismentData():
             )
         )
 
-    def datasetReturn(self, shuffle=None, batch_size=32, val_data=None):
+        self.train = self.seq.sample(frac=0.8)
+        self.test = self.seq[~self.seq.index.isin(self.train.index)]
 
-        dataset = tf.data.Dataset.from_generator(lambda: self.seq, output_types=(tf.int32, tf.int32, tf.int32))
+
+    def datasetReturn(self, data, shuffle=None, batch_size=32, val_data=None):
+        dataset = tf.data.Dataset.from_generator(lambda: data, output_types=(tf.int32, tf.int32, tf.int32))
 
         if shuffle:
             dataset = dataset.shuffle(buffer_size=shuffle)
-        # mask
+
         MASK_VALUE = -1
-        # padd
         dataset = dataset.padded_batch(
-            batch_size=3,
-            padding_values=( MASK_VALUE,MASK_VALUE, MASK_VALUE),
-            padded_shapes=( [None], [None], [None]),
+            batch_size=50,
+            padding_values=(MASK_VALUE, MASK_VALUE, MASK_VALUE),
+            padded_shapes=([None], [None], [None]),
             drop_remainder=True
         )
-        i = 0
-        for l in dataset.as_numpy_iterator():
-            i += 1
-        # split
-        test_size = int(np.ceil(i * 0.2))
-        train_size = i - test_size
-        val_size = int(np.ceil(i * 0.2))
-        train_size = train_size - val_size
 
-        test_data = dataset.take(test_size)
-        dataset = dataset.skip(test_size)
-
-        val_data = dataset.take(val_size)
-        dataset = dataset.skip(val_size)
-
-        return dataset, test_data, val_data
+        return dataset
