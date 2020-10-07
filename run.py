@@ -25,8 +25,6 @@ def test_one_step(skillid, skill_correctness, correctness):
     probility = tf.boolean_mask(probility, mask)
     label = tf.boolean_mask(correctness, mask)
 
-    label = tf.one_hot(label, depth=2)
-
     vauc.update_state(label, probility)
 
 
@@ -39,11 +37,10 @@ def train_one_step(skillid, skill_correctness, correctness):
         probility = tf.boolean_mask(probility, mask)
         label = tf.boolean_mask(correctness, mask)
 
-        label = tf.one_hot(label, depth=2)
         # 求bc
         bc.update_state(label, probility)
 
-        loss = tf.losses.categorical_crossentropy(label, probility)
+        loss = tf.losses.binary_crossentropy(label, probility)
 
         auc.update_state(label, probility)
 

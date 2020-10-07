@@ -59,7 +59,7 @@ class DKVMN(tf.keras.models.Model):
         self.erase = tf.keras.layers.Dense(embedding_size)
         self.add = tf.keras.layers.Dense(embedding_size, activation="tanh")
         self.r = tf.keras.layers.Dense(embedding_size, activation="tanh")
-        self.p = tf.keras.layers.Dense(2, activation="sigmoid")
+        self.p = tf.keras.layers.Dense(1, activation="sigmoid")
 
     def call(self, skillid, skill_correctness, correctness):
         shape = skillid.shape
